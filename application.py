@@ -1,10 +1,14 @@
 import os
 import requests
 
-from flask import Flask, session, render_template
+# For showing messages on terminal
+import sys
+
+from flask import Flask, session, render_template, jsonify, request
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
+
 
 app = Flask(__name__)
 
@@ -36,3 +40,20 @@ def login():
 @app.route("/logout")
 def logout():
    return render_template("logout.html")
+
+@app.route("/register", methods = ['POST', 'GET'])
+def register_user():
+
+    if request.method != 'POST':
+        
+        #
+        countries = requests.get("https://restcountries.eu/rest/v2/all", params={"fields": "name"})
+
+        print(countries, file=sys.stderr)
+
+        return render_template("register.html", countries=countries.json())
+        
+
+    return render_template("register.html")
+
+    

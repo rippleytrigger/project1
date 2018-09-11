@@ -5,3 +5,9 @@ CREATE TABLE users (
     username VARCHAR NOT NULL,
     password VARCHAR NOT NULL
 );
+
+CREATE TABLE country (
+    id SERIAL PRIMARY KEY,
+    country VARCHAR NOT NULL,
+    postal-code INT(4) NOT NULL
+);
