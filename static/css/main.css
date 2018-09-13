@@ -1,0 +1,37 @@
+.nav-menu {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+}
+.nav-menu ul {
+  display: flex;
+  justify-content: space-around;
+  padding: 2rem;
+  list-style: none;
+}
+
+.container {
+  margin: 3em 3em;
+}
+
+/* -----------------------------------------    Desktops    ------------------------------------- */
+/* Large Desktop */
+/* Medium Desktop & iPad Pro Landscape */
+/* Small Desktop & Galaxy Tab Landscape */
+/**** The7 starts mobile *****/
+/* --------------------------------------    Tablets $ Mobile    -------------------------------- */
+/* iPad Pro Portrait & iPad I/II Landscape */
+/* iPad Pro Portrait & iPad I/II Landscape */
+/* Galaxy Tab Portrait */
+/* iPad I/II Portrait */
+/* iPad I/II Portrait */
+/* iPhone 6+ Landscape */
+/* Phone 6 Landscape */
+/* Galaxy S3/S4/S5 Landscape*/
+/* iPhone 5 Landscape */
+/* iPhone 4 Landscape */
+/* iPhone 6+ Portrait */
+/* iPhone 6 Portrait */
+/* iPhone 4/5 & Galaxy S3/S4/S5 Portrait */
+
+/*# sourceMappingURL=main.css.map */
