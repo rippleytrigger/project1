@@ -7,15 +7,42 @@
 {% block body %}
     <form action="{{ url_for('register_user') }}" method="POST">
 
-        <label for="name">Your Name</label>
-        <input type="text" name="name" />
+        <div class="two-columns-container">
+            <!-- User Credentials -->
+            <div>
+                <label for="name">Your Name</label>
+                <input type="text" name="name" />
 
-        <select>
-            {% for country in countries %}
-            <option>{{ country["name"] }}</option>
-            {% endfor %}
-        </select>
+                <label for="username">Your Username</label>
+                <input type="text" name="username" />
 
+                <label for="pass">Your Password</label>
+                <input type="password" name="pass" />
+            </div>
+
+            <!-- Addresses -->
+            <div>
+                <label for="address1">Address 1</label>
+                <input type="text" name="address1" />
+        
+                <label for="address2">Address 2</label>
+                <input type="text" name="address2" />
+
+                <label for="countries">Countries</label>
+                <select name="countries">
+                    {% for country in countries %}
+                    <option value="{{ country['name'] }}">{{ country["name"] }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="state">State</label>
+                <input type="text" name="state" />
+
+                <label for="postal_code">Postal Code</label>
+                <input type="text" name="postal_code" />
+            </div>
+        </div>
+        
         <button> Submit </button>
     </form>
 {% endblock %}

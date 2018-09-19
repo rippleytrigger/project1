@@ -1,17 +1,16 @@
-.nav-menu {
-  width: 100%;
-  position: absolute;
-  bottom: 0;
+.two-columns-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 5%;
 }
-.nav-menu ul {
+.two-columns-container > div {
+  grid-template-areas: "header" "footer";
   display: flex;
-  justify-content: space-around;
-  padding: 2rem;
-  list-style: none;
+  flex-direction: column;
 }
 
-.container {
-  margin: 3em 3em;
+form button {
+  grid-area: "footer";
 }
 
 /* -----------------------------------------    Desktops    ------------------------------------- */

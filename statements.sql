@@ -7,6 +7,11 @@ CREATE TABLE users (
     CONSTRAINT addresses FOREIGN KEY (address_id)
 );
 
+/*CREATE TABLE roles (
+    id SERIAL PRIMARY KEY,
+    role VARCHAR(16) NOT NULL UNIQUE
+)*/
+
 CREATE TABLE books (
     id SERIAL PRIMARY KEY,
     ISBN_number INTEGER UNIQUE NOT NULL,
