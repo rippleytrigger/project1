@@ -1,7 +1,7 @@
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     name VARCHAR NOT NULL,
-    address_id UNIQUE VARCHAR NOT NULL,
+    address_id VARCHAR UNIQUE NOT NULL,
     username VARCHAR NOT NULL,
     password VARCHAR NOT NULL,
     CONSTRAINT addresses FOREIGN KEY (address_id)
@@ -14,7 +14,7 @@ CREATE TABLE users (
 
 CREATE TABLE books (
     id SERIAL PRIMARY KEY,
-    ISBN_number INTEGER UNIQUE NOT NULL,
+    ISBN_number VARCHAR UNIQUE NOT NULL,
     title VARCHAR UNIQUE NOT NULL,
     author VARCHAR NOT NULL,
     publication_year DATE NOT NULL
