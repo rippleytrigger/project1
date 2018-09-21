@@ -1,5 +1,19 @@
-def set_password(self, password):
-  self.password_hash = generate_password_hash(password)
+import re
+import os
+from sqlalchemy import create_engine
+from sqlalchemy.orm import scoped_session, sessionmaker
+
+# Set up database
+engine = create_engine(os.getenv("DATABASE_URL"))
+db = scoped_session(sessionmaker(bind=engine))
+
+"""class form_checker:
+  def __init__(self, name, age):
+    self.name = name
+    self.age = age"""
+
+def set_password(password):
+  return generate_password_hash(password)
 
 def check_password(password):
   return check_password_hash(password_hash, password)
@@ -21,8 +35,13 @@ def validate_username(username):
   if not username:
       raise AssertionError('No username provided')
 
-  if User.query.filter(User.username == username).first():
-    raise AssertionError('Username is already in use')
+  username_db = db.execute("SELECT username FROM users WHERE username = :username LIMIT 1",
+  {"username": username})
+
+  print(username_db)
+
+  if username_db:
+    raise AssertionError(f'{username_db} is already in use')
 
   if len(username) < 5 or len(username) > 20:
     raise AssertionError('Username must be between 5 and 20 characters')
@@ -38,3 +57,5 @@ def validate_email(email):
     raise AssertionError('Provided email is not an email address')
 
   return email
+
+  
