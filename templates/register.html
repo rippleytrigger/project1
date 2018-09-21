@@ -44,5 +44,8 @@
         </div>
         
         <button> Submit </button>
+        {% if error is defined %}
+            value of variable: {{ error }}
+        {% endif %}
     </form>
 {% endblock %}

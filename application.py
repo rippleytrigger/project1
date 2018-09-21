@@ -1,7 +1,7 @@
 import os
 import requests
 
-from flask import Flask, session, render_template, jsonify, request
+from flask import Flask, session, render_template, jsonify, request, redirect
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -22,8 +22,8 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Set up database
-#engine = create_engine(os.getenv("DATABASE_URL"))
-#db = scoped_session(sessionmaker(bind=engine))
+engine = create_engine(os.getenv("DATABASE_URL"))
+db = scoped_session(sessionmaker(bind=engine))
 
 # Establish API KEY from goodreads.com
 api_key = "K3Vcr1bUtGxwuMZLAZFFA"
@@ -41,49 +41,84 @@ def login():
 def logout():
    return render_template("logout.html")
 
+"""@app.route("/register", methods = ['POST', 'GET'])
+def register_user():
+
+    if request.method == "POST":
+
+        # Ensure username was submitted
+        if not request.form.get("username"):
+            return apology("must provide username", 400)
+
+        # Ensure username was submitted
+        if not request.form.get("name"):
+            return apology("must provide username", 400)
+
+        # Ensure password was submitted
+        elif not request.form.get("password"):
+            return apology("must provide password", 400)
+
+        # Ensure password confirmation was submitted
+        elif not request.form.get("confirmation"):
+            return apology("must provide password confirmation", 400)
+
+
+        # Convert original password to a hash
+        hash_pass = generate_password_hash(request.form.get("password"))
+
+        # Insert register
+        result = db.execute("INSERT INTO users (name, address_id, username, password) VALUES (:name, :address_id, username, password)",
+        {"name": name, "address_id": 1, "username": username, "password": hash_pass})
+
+        if not result:
+            return apology("You are already registered", 400)
+
+        # Remember which user has logged in
+        session["user_id"] = result
+
+        # Redirect user to home page
+        return redirect("/")
+
+    else:
+         #Get countries lists json response from restcountries API
+        countries = requests.get("https://restcountries.eu/rest/v2/all", params={"fields": "name"})
+
+        return render_template("register.html", countries=countries.json())"""
+
+        
+
 @app.route("/register", methods = ['POST', 'GET'])
 def register_user():
 
-    if request.method == 'GET':
-        
-        #Get countries lists json response from restcountries API
+    """Register user"""
+    if request.method == "POST":
+
+        username = request.form.get("username")
+        countries = requests.get("https://restcountries.eu/rest/v2/all", params={"fields": "name"})
+
+        try:
+            validate_username(username, db, countries)
+        except AssertionError as e:
+            return render_template("register.html", error=str(e)) 
+
+        # Insert register
+        #result = db.execute("INSERT INTO users (name, address_id, username, password) VALUES (:name, :address_id, username, password)",
+        #{"name": name, "address_id": 1, "username": username, "password": hash_pass})
+
+        if not result:
+            return apology("You are already registered", 400)
+
+        # Remember which user has logged in
+        session["user_id"] = result
+
+        # Redirect user to home page
+        return redirect("/")
+
+    else:
+         #Get countries lists json response from restcountries API
         countries = requests.get("https://restcountries.eu/rest/v2/all", params={"fields": "name"})
 
         return render_template("register.html", countries=countries.json())
-        
-    else:
-
-        addresses = []
-
-        #for address in request.form.to_dict():
-        #    addresses.append(request.form.to_dict()[address])
-        #    print(addresses)
-
-        """ User POST Data """
-        name = request.form.get('address1')
-        username = request.form.get('username')
-        password = request.form.get('pass')
-
-        try:
-            validate_username(username)
-            #validate_password(password)
-            #validate_email(email)
-        except AssertionError:
-            raise
-        
-
-        #Insert Address on DB
-        #db.execute("INSERT INTO addresses (address1, address2, country, state, postal_code) VALUES (:address1, :address2, :country, :state, :postal_code)",
-        #{"address1": address1, "address2": address2, "country": country, "state": state, "postal_code": postal_code})
-
-        #Insert User on DB
-        #db.execute("INSERT INTO users (user_id, name, username, password) VALUES (:name, :address_id, username, password)",
-        #{"name": name, "address_id": address_id, "username": username, "password": password})
-
-        #db.commit()
-        
-        return render_template("register.html")   
-
     
 
     
