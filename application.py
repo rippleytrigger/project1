@@ -92,24 +92,30 @@ def register_user():
 
     """Register user"""
     if request.method == "POST":
-
+        
+        name = request.form.get("name")
         username = request.form.get("username")
-        countries = requests.get("https://restcountries.eu/rest/v2/all", params={"fields": "name"})
+        password = request.form.get("pass")
+        #email = request.form.get("email")
 
         try:
-            validate_username(username, db, countries)
-        except AssertionError as e:
-            return render_template("register.html", error=str(e)) 
+            validate_username(username, db)
+            validate_password(password)
+            #validate_email(email)
+        except ValueError as e:
+            return jsonify({"message": str(e), "status": 400}) 
 
-        # Insert register
-        #result = db.execute("INSERT INTO users (name, address_id, username, password) VALUES (:name, :address_id, username, password)",
-        #{"name": name, "address_id": 1, "username": username, "password": hash_pass})
+        # Convert original password to a hash
+        hash_pass = generate_password_hash(password)
 
-        if not result:
-            return apology("You are already registered", 400)
+        # Insert user
+        db.execute("INSERT INTO users (name,username, password, role_id) VALUES (:name, :username, :password, :role_id)",
+        {"name": name, "username": username, "password": hash_pass, "role_id": 1})
+
+        db.commit()
 
         # Remember which user has logged in
-        session["user_id"] = result
+        session["user_id"] = 1
 
         # Redirect user to home page
         return redirect("/")

@@ -19,35 +19,32 @@ def login_required(f):
 
 def validate_password(password):
   if not password:
-      raise AssertionError('Password not provided')
+      raise ValueError('Password not provided')
 
   if not re.match('\d.*[A-Z]|[A-Z].*\d', password):
-      raise AssertionError('Password must contain 1 capital letter and 1 number')
+      raise ValueError('Password must contain 1 capital letter and 1 number')
 
   if len(password) < 8 or len(password) > 50:
-      raise AssertionError('Password must be between 8 and 50 characters')
+      raise ValueError('Password must be between 8 and 50 characters')
 
  
-def validate_username(username, db, countries):
+def validate_username(username, db):
   if not username:
-      raise AssertionError('No username provided')
+      raise ValueError('No username provided')
 
   if db.execute("SELECT username FROM users WHERE username = :username LIMIT 1", {"username": username}).rowcount != 0:
-    raise AssertionError(f'The username you provided is already in use')
+    raise ValueError(f'The username you provided is already in use')
 
   if len(username) < 5 or len(username) > 20:
-    raise AssertionError('Username must be between 5 and 20 characters')
-    
-  return username
+    raise ValueError('Username must be between 5 and 20 characters')
 
 
 def validate_email(email):
   if not email:
-    raise AssertionError('No email provided')
+    raise ValueError('No email provided')
 
   if not re.match("[^@]+@[^@]+\.[^@]+", email):
-    raise AssertionError('Provided email is not an email address')
+    raise ValueError('Provided email is not an email address')
 
-  return email
 
   
