@@ -33,63 +33,52 @@ api_key = "K3Vcr1bUtGxwuMZLAZFFA"
 def index():
    return render_template("index.html")
 
-@app.route("/login")
+@app.route("/login", methods = ['POST', 'GET'])
 def login():
-   return render_template("login.html")
-
-@app.route("/logout")
-def logout():
-   return render_template("logout.html")
-
-"""@app.route("/register", methods = ['POST', 'GET'])
-def register_user():
-
+    """Login user"""
     if request.method == "POST":
 
-        # Ensure username was submitted
-        if not request.form.get("username"):
-            return apology("must provide username", 400)
+        # Forget any user_id
+        session.clear()
 
-        # Ensure username was submitted
-        if not request.form.get("name"):
-            return apology("must provide username", 400)
+        if request.method == "POST":
 
-        # Ensure password was submitted
-        elif not request.form.get("password"):
-            return apology("must provide password", 400)
+            # Ensure username was submitted
+            if not request.form.get("username"):
+                return jsonify({"message": "must provide username", "status": 403}) 
 
-        # Ensure password confirmation was submitted
-        elif not request.form.get("confirmation"):
-            return apology("must provide password confirmation", 400)
+            # Ensure password was submitted
+            elif not request.form.get("pass"):
+                return jsonify({"message": "must provide password", "status": 403}) 
 
+            # Query database for username
+            rows = db.execute("SELECT * FROM users WHERE username = :username", {"username" : request.form.get("username") }).fetchone
 
-        # Convert original password to a hash
-        hash_pass = generate_password_hash(request.form.get("password"))
+            # Ensure username exists and password is correct
+            if rows is None or not check_password_hash(rows[3], request.form.get("pass")):
+                return jsonify({"message": "invalid username and/or password", "status": 403}) 
 
-        # Insert register
-        result = db.execute("INSERT INTO users (name, address_id, username, password) VALUES (:name, :address_id, username, password)",
-        {"name": name, "address_id": 1, "username": username, "password": hash_pass})
+            # Remember which user has logged in
+            session["user_id"] = rows[0]
 
-        if not result:
-            return apology("You are already registered", 400)
-
-        # Remember which user has logged in
-        session["user_id"] = result
-
-        # Redirect user to home page
-        return redirect("/")
-
+            # Redirect user to home page
+            return redirect("/")
     else:
-         #Get countries lists json response from restcountries API
-        countries = requests.get("https://restcountries.eu/rest/v2/all", params={"fields": "name"})
+        return render_template("login.html")
 
-        return render_template("register.html", countries=countries.json())"""
+@app.route("/logout", methods = ['POST', 'GET'])
+def logout():
+    """Log user out"""
 
+    # Forget any user_id
+    session.clear()
+
+    # Redirect user to login form
+    return redirect("/")
+    
         
-
 @app.route("/register", methods = ['POST', 'GET'])
 def register_user():
-
     """Register user"""
     if request.method == "POST":
         
@@ -116,7 +105,9 @@ def register_user():
 
         # Get user id from db
         user_id = db.execute("SELECT user_id FROM users WHERE username = :username",
-        {"username" = username })
+        {"username": username }).fetchone()
+
+        print(user_id)
 
         # Remember which user has logged in
         session["user_id"] = user_id
