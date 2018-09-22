@@ -114,8 +114,12 @@ def register_user():
 
         db.commit()
 
+        # Get user id from db
+        user_id = db.execute("SELECT user_id FROM users WHERE username = :username",
+        {"username" = username })
+
         # Remember which user has logged in
-        session["user_id"] = 1
+        session["user_id"] = user_id
 
         # Redirect user to home page
         return redirect("/")
