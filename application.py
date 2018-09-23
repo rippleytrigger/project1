@@ -26,7 +26,7 @@ engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
 # Establish API KEY from goodreads.com
-api_key = "K3Vcr1bUtGxwuMZLAZFFA"
+api_key = os.getenv("API_KEY_GOODREADS")
 
 
 @app.route("/")
@@ -52,17 +52,22 @@ def login():
                 return jsonify({"message": "must provide password", "status": 403}) 
 
             # Query database for username
-            rows = db.execute("SELECT * FROM users WHERE username = :username", {"username" : request.form.get("username") }).fetchone
+            rows = db.execute("SELECT * FROM users WHERE username = :username", {"username" : request.form.get("username") }).fetchone()
+            rows = dict(rows)
 
-            # Ensure username exists and password is correct
-            if rows is None or not check_password_hash(rows[3], request.form.get("pass")):
-                return jsonify({"message": "invalid username and/or password", "status": 403}) 
+            # Ensure username exists
+            if rows is None:
+                return jsonify({"message": "invalid username", "status": 403}) 
+
+            # Ensure password is correct
+            if not check_password_hash(rows['password'], request.form.get("pass")):
+                return jsonify({"message": "invalid password", "status": 403}) 
 
             # Remember which user has logged in
-            session["user_id"] = rows[0]
+            session["user_id"] = rows['user_id']
 
             # Redirect user to home page
-            return redirect("/")
+            return redirect("/search")
     else:
         return render_template("login.html")
 
@@ -122,4 +127,7 @@ def register_user():
         return render_template("register.html", countries=countries.json())
     
 
-    
+@app.route("/search", methods = ['POST', 'GET'])
+@login_required
+def search():
+    return render_template("search.html")
