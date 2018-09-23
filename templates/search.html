@@ -5,7 +5,13 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Search!</h1>
+    <form method="POST" action="{{ url_for('search') }}">
+        <h1>Search!</h1>
 
-    You have successfully booked your flight.
+        <input type="text" id="search-input" name="search-input"/>
+
+        <button>Search book!</button>
+
+    </form>
+    
 {% endblock %}

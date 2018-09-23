@@ -12,6 +12,13 @@ from helpers import *
 
 app = Flask(__name__)
 
+# Aditional Debugger
+from flask_debugtoolbar import DebugToolbarExtension
+app.debug = True
+app.config["SECRET_KEY"] = "DontTellAnyone"
+
+toolbar = DebugToolbarExtension(app)
+
 # Check for environment variable
 if not os.getenv("DATABASE_URL"):
     raise RuntimeError("DATABASE_URL is not set")
@@ -130,4 +137,15 @@ def register_user():
 @app.route("/search", methods = ['POST', 'GET'])
 @login_required
 def search():
-    return render_template("search.html")
+    """Search book"""
+    if request.method == "POST":
+
+        search = request.form.get("search-input")
+
+        rows = db.execute(f"SELECT * FROM books WHERE LOWER(author) LIKE '%{search.lower()}%'").fetchall()
+        rows = dict(rows)
+
+        return jsonify(rows)
+
+    else:
+        return render_template("search.html")
