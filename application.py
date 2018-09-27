@@ -1,5 +1,6 @@
 import os
 import requests
+import json
 
 from flask import Flask, session, render_template, jsonify, request, redirect
 from flask_session import Session
@@ -142,10 +143,18 @@ def search():
 
         search = request.form.get("search-input")
 
-        rows = db.execute(f"SELECT * FROM books WHERE LOWER(author) LIKE '%{search.lower()}%'").fetchall()
-        rows = dict(rows)
+        rows = db.execute(f"SELECT * FROM books WHERE LOWER(author) LIKE '%{search.lower()}%' LIMIT 50").fetchall()
 
-        return jsonify(rows)
+        json_response = []
+
+        for row in rows:
+            json_response.append({ 
+                        "isbn_number": row[0],
+                       "title": row[1],
+                       "author": row[2],
+                       "publication_year": row[3]
+            })
+        return jsonify({"success": True, "list": json_response})
 
     else:
         return render_template("search.html")
