@@ -1,6 +1,8 @@
 import os
 import requests
+import json
 
+from types import *
 from flask import Flask, session, render_template, jsonify, request, redirect
 from flask_session import Session
 from sqlalchemy import create_engine
@@ -142,10 +144,32 @@ def search():
 
         search = request.form.get("search-input")
 
-        rows = db.execute(f"SELECT * FROM books WHERE LOWER(author) LIKE '%{search.lower()}%'").fetchall()
-        rows = dict(rows)
+        """ Users should be able to type in the ISBN number of a book, 
+        the title of a book, or the author of a book """
 
-        return jsonify(rows)
+        if isinstance(search, str):
+            rows = db.execute(f"SELECT * FROM books WHERE \
+            ( LOWER(title) LIKE '%{search.lower()}%' OR LOWER(author) LIKE '%{search.lower()}%' ) \
+            LIMIT 50").fetchall()
+
+        if validate_string_content(search) == True:
+            rows = db.execute(f"SELECT * FROM books WHERE ISBN_number LIKE '{search}%' LIMIT 50").fetchall()
+
+        if rows:
+            json_response = []
+
+            for row in rows:
+                json_response.append({ 
+                            "isbn_number": row[0],
+                        "title": row[1],
+                        "author": row[2],
+                        "publication_year": row[3]
+                })
+            return jsonify({"success": True, "list": json_response}), 200
+
+        else:
+            print(rows)
+            return jsonify({"success": False}), 404
 
     else:
         return render_template("search.html")

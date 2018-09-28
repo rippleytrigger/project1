@@ -47,4 +47,17 @@ def validate_email(email):
     raise ValueError('Provided email is not an email address')
 
 
-  
+def validate_string_content(s):
+    """ Validates if there are more digits than chars in a string"""
+
+    chars = 0
+    digits = 0
+
+    for c in s:
+        if c.isdigit():
+            digits = digits + 1
+
+        if c.isalpha():
+            chars = chars + 1
+
+    return True if digits > chars else False

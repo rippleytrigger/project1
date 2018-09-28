@@ -13,6 +13,18 @@ form button {
   grid-area: "footer";
 }
 
+.book-list {
+  margin-top: 2em;
+}
+.book-list ul {
+  list-style: none;
+  padding: 0;
+}
+.book-list ul li {
+  border-top: 1px solid #ccc;
+  padding: 2em 0;
+}
+
 /* -----------------------------------------    Desktops    ------------------------------------- */
 /* Large Desktop */
 /* Medium Desktop & iPad Pro Landscape */
