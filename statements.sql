@@ -32,14 +32,15 @@ CREATE TABLE reviews (
 
 
 CREATE TABLE addresses (
-CREATE TABLE addresses (
     user_id SERIAL PRIMARY KEY,
     address1  VARCHAR(120) NOT NULL,
     address2  VARCHAR(120),
     country VARCHAR NOT NULL,
     state VARCHAR NOT NULL,
     postal_code VARCHAR(16) NOT NULL
-);    user_id SERIAL PRIMARY KEY,
+);
+
+    user_id SERIAL PRIMARY KEY,
     address1  VARCHAR(120) NOT NULL,
     address2  VARCHAR(120),
     country VARCHAR NOT NULL,

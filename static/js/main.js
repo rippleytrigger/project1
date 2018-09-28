@@ -14,7 +14,7 @@ function render_book_list(response)
         //response.list[book][book_details]
         let li = document.createElement("li");
 
-        li.innerHTML = `<h2> <a href="${response.list[book].title}"> ${response.list[book].title} </a>  </h2>`
+        li.innerHTML = `<h2> <a href="/books/isbn_number/${response.list[book].isbn_number}"> ${response.list[book].title} </a>  </h2>`
 
         book_list.appendChild(li);
     }

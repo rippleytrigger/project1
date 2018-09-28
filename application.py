@@ -3,7 +3,7 @@ import requests
 import json
 
 from types import *
-from flask import Flask, session, render_template, jsonify, request, redirect
+from flask import Flask, session, render_template, jsonify, request, redirect, abort
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -152,7 +152,7 @@ def search():
             ( LOWER(title) LIKE '%{search.lower()}%' OR LOWER(author) LIKE '%{search.lower()}%' ) \
             LIMIT 50").fetchall()
 
-        if validate_string_content(search) == True:
+        elif validate_string_content(search) == True:
             rows = db.execute(f"SELECT * FROM books WHERE ISBN_number LIKE '{search}%' LIMIT 50").fetchall()
 
         if rows:
@@ -168,8 +168,29 @@ def search():
             return jsonify({"success": True, "list": json_response}), 200
 
         else:
-            print(rows)
             return jsonify({"success": False}), 404
 
     else:
         return render_template("search.html")
+
+@app.route("/books/isbn_number/<string:isbn>", methods = ['POST', 'GET'])
+@login_required
+def show_book(isbn):
+    """Search book"""
+    if request.method == "POST":
+        return render_template("book.html")
+    else:
+        """ Book Details """
+
+        book_details = db.execute("SELECT * FROM books INNER JOIN reviews ON books.ISBN_number = reviews.ISBN_number WHERE ISBN_number = :isbn",
+                        {"isbn" : isbn})
+        
+        #book_details = db.execute("SELECT * FROM books WHERE ISBN_number = :isbn", 
+        #{"isbn" : isbn }).fetchone()
+
+        if book_details is None:
+            abort(404)
+
+        book_details = dict(book_details)
+
+        return render_template("book.html", book_details = book_details)
