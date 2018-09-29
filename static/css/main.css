@@ -1,8 +1,27 @@
+@charset "UTF-8";
+
+.nav-menu {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+}
+.nav-menu ul {
+  display: flex;
+  justify-content: space-around;
+  padding: 2rem;
+  list-style: none;
+}
+
+.container {
+  margin: 3em 3em;
+}
+
 .two-columns-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-gap: 5%;
 }
+
 .two-columns-container > div {
   grid-template-areas: "header" "footer";
   display: flex;
@@ -16,13 +35,58 @@ form button {
 .book-list {
   margin-top: 2em;
 }
+
 .book-list ul {
   list-style: none;
   padding: 0;
 }
+
 .book-list ul li {
   border-top: 1px solid #ccc;
   padding: 2em 0;
+}
+
+/****** Style Star Rating Widget *****/
+.rating {
+  border: none;
+  float: left;
+}
+
+.rating > input {
+  display: none;
+}
+
+.rating > label:before {
+  margin: 5px;
+  font-size: 1.25em;
+  font-family: FontAwesome;
+  display: inline-block;
+  content: "";
+}
+
+.rating > .half:before {
+  content: "";
+  position: absolute;
+}
+
+.rating > label {
+  color: #ddd;
+  float: right;
+}
+
+/***** CSS Magic to Highlight Stars on Hover *****/
+.rating > input:checked ~ label,
+.rating:not(:checked) > label:hover,
+.rating:not(:checked) > label:hover ~ label {
+  color: #FFD700;
+}
+
+/* hover previous stars in list */
+.rating > input:checked + label:hover,
+.rating > input:checked ~ label:hover,
+.rating > label:hover ~ input:checked ~ label,
+.rating > input:checked ~ label:hover ~ label {
+  color: #FFED85;
 }
 
 /* -----------------------------------------    Desktops    ------------------------------------- */
