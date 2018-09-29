@@ -182,15 +182,24 @@ def show_book(isbn):
     else:
         """ Book Details """
 
-        book_details = db.execute("SELECT * FROM books INNER JOIN reviews ON books.ISBN_number = reviews.ISBN_number WHERE ISBN_number = :isbn",
-                        {"isbn" : isbn})
+        res = requests.get("https://www.goodreads.com/book/review_counts.json", 
+        params={"key": api_key, "isbns": isbn})
         
-        #book_details = db.execute("SELECT * FROM books WHERE ISBN_number = :isbn", 
-        #{"isbn" : isbn }).fetchone()
+        print(res.json())
+
+        print(isbn)
+
+        #book_details = db.execute("SELECT * FROM books LEFT JOIN reviews ON books.ISBN_number = reviews.ISBN_number WHERE books.ISBN_number = :isbn",
+        #                {"isbn" : isbn}).fetchall()
+    
+        book_details = db.execute("SELECT * FROM books WHERE ISBN_number = :isbn", 
+        {"isbn" : isbn }).fetchone()
+
+        print(book_details)
 
         if book_details is None:
             abort(404)
 
-        book_details = dict(book_details)
+        #book_details = dict(book_details)
 
         return render_template("book.html", book_details = book_details)

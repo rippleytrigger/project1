@@ -22,7 +22,7 @@ CREATE TABLE books (
 CREATE TABLE reviews (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL,
-    ISBN_number INTEGER NOT NULL,
+    ISBN_number VARCHAR NOT NULL,
     review_count INTEGER NOT NULL, 
     average_score INTEGER NOT NULL,
     CHECK (average_score<=5),
