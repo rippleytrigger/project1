@@ -1,19 +1,8 @@
 @charset "UTF-8";
-
-.nav-menu {
-  width: 100%;
-  position: absolute;
-  bottom: 0;
-}
-.nav-menu ul {
-  display: flex;
-  justify-content: space-around;
-  padding: 2rem;
-  list-style: none;
-}
-
-.container {
-  margin: 3em 3em;
+:root {
+  --main-line-color: #ccc;
+  --blank-star-color: #ddd;
+  --bg-star-color: #FFD700 ;
 }
 
 .two-columns-container {
@@ -21,7 +10,6 @@
   grid-template-columns: 1fr 1fr;
   grid-gap: 5%;
 }
-
 .two-columns-container > div {
   grid-template-areas: "header" "footer";
   display: flex;
@@ -35,14 +23,12 @@ form button {
 .book-list {
   margin-top: 2em;
 }
-
 .book-list ul {
   list-style: none;
   padding: 0;
 }
-
 .book-list ul li {
-  border-top: 1px solid #ccc;
+  border-top: 1px solid var(--main-line-color);
   padding: 2em 0;
 }
 
@@ -50,42 +36,32 @@ form button {
 .rating {
   border: none;
   float: left;
+  /***** CSS Magic to Highlight Stars on Hover *****/
+  /* hover previous stars in list */
 }
-
 .rating > input {
   display: none;
 }
-
 .rating > label:before {
   margin: 5px;
   font-size: 1.25em;
   font-family: FontAwesome;
   display: inline-block;
-  content: "";
+  content: "★";
 }
-
 .rating > .half:before {
   content: "";
   position: absolute;
 }
-
 .rating > label {
-  color: #ddd;
+  color: var(--blank-star-color);
   float: right;
 }
-
-/***** CSS Magic to Highlight Stars on Hover *****/
-.rating > input:checked ~ label,
-.rating:not(:checked) > label:hover,
-.rating:not(:checked) > label:hover ~ label {
-  color: #FFD700;
+.rating > input:checked ~ label, .rating:not(:checked) > label:hover, .rating:not(:checked) > label:hover ~ label {
+  color: var(--blank-star-color);
+  color: var(--bg-star-color);
 }
-
-/* hover previous stars in list */
-.rating > input:checked + label:hover,
-.rating > input:checked ~ label:hover,
-.rating > label:hover ~ input:checked ~ label,
-.rating > input:checked ~ label:hover ~ label {
+.rating > input:checked + label:hover, .rating > input:checked ~ label:hover, .rating > label:hover ~ input:checked ~ label, .rating > input:checked ~ label:hover ~ label {
   color: #FFED85;
 }
 
@@ -93,7 +69,7 @@ form button {
 /* Large Desktop */
 /* Medium Desktop & iPad Pro Landscape */
 /* Small Desktop & Galaxy Tab Landscape */
-/**** The7 starts mobile *****/
+/**** Starts mobile *****/
 /* --------------------------------------    Tablets $ Mobile    -------------------------------- */
 /* iPad Pro Portrait & iPad I/II Landscape */
 /* iPad Pro Portrait & iPad I/II Landscape */

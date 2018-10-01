@@ -178,10 +178,15 @@ def search():
 def show_book(isbn):
     """Search book"""
     if request.method == "POST":
-        return render_template("book.html")
+        """ TODO Query Review """
+
+
+        return render_template("book.html", book_details = book_details, isbn = isbn)
     else:
         """ Book Details """
 
+
+        # API Good Reads
         res = requests.get("https://www.goodreads.com/book/review_counts.json", 
         params={"key": api_key, "isbns": isbn})
         
@@ -202,4 +207,4 @@ def show_book(isbn):
 
         #book_details = dict(book_details)
 
-        return render_template("book.html", book_details = book_details)
+        return render_template("book.html", book_details = book_details, isbn = isbn)
