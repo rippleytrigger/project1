@@ -180,6 +180,16 @@ def show_book(isbn):
     if request.method == "POST":
         """ TODO Query Review """
 
+        rating = request.form.get('rating')
+
+        review_description = request.form.get('review-description')
+
+        print(f"{rating} --- {review_description} --- {isbn} --- {session['user_id']}")
+
+        db.execute("INSERT INTO reviews (user_id, ISBN_number, score, description) VALUES (:user_id, :ISBN_number, :rating, :description)", 
+        {"user_id": session['user_id'], "ISBN_number": isbn, "rating": rating, "description": review_description})
+
+        db.commit()
 
         return render_template("book.html", book_details = book_details, isbn = isbn)
     else:

@@ -14,15 +14,22 @@
     </ul>
 
     {% if reviews is defined %}
-
-
+        
+    {% else %}
+        <div class="alert alert-dark" role="alert">
+            There is no reviews... yet !!!
+        </div>
     {% endif %}
+
+    <hr />
 
     <div class="reviews">
         <h2> Leave a Review... </h2>
         
-        <form method="POST" action="{{ url_for('show_book', isbn=isbn) }}">
+        <form id="review-form" method="POST" action="{{ url_for('show_book', isbn=isbn) }}">
+
             <ul>
+                <p> Rating: </p>
                 <fieldset class="rating">
                     <input type="radio" id="star5" name="rating" value="5" /><label class = "full" for="star5" title="Awesome - 5 stars"></label>
                     <input type="radio" id="star4half" name="rating" value="4 and a half" /><label class="half" for="star4half" title="Pretty good - 4.5 stars"></label>
@@ -37,7 +44,7 @@
                 </fieldset>                      
             </ul>
             
-            <textarea placeholder="Write your Review..." required></textarea>
+            <textarea name="review-description" placeholder="Write your Review..." required></textarea>
 
             <button class="btn"> Send Review </button>
         </form>

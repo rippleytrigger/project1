@@ -2,7 +2,7 @@
 :root {
   --main-line-color: #ccc;
   --blank-star-color: #ddd;
-  --bg-star-color: #FFD700 ;
+  --bg-star-color: #FFD700;
 }
 
 .two-columns-container {
@@ -58,11 +58,23 @@ form button {
   float: right;
 }
 .rating > input:checked ~ label, .rating:not(:checked) > label:hover, .rating:not(:checked) > label:hover ~ label {
-  color: var(--blank-star-color);
   color: var(--bg-star-color);
 }
 .rating > input:checked + label:hover, .rating > input:checked ~ label:hover, .rating > label:hover ~ input:checked ~ label, .rating > input:checked ~ label:hover ~ label {
-  color: #FFED85;
+  color: var(--bg-star-color);
+}
+
+#review-form {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+#review-form textarea {
+  margin-bottom: 2em;
+  height: 115px;
+}
+#review-form .btn {
+  margin: 0 auto;
 }
 
 /* -----------------------------------------    Desktops    ------------------------------------- */

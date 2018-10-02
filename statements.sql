@@ -24,7 +24,7 @@ CREATE TABLE reviews (
     user_id INTEGER NOT NULL,
     ISBN_number VARCHAR NOT NULL,
     review_count INTEGER NOT NULL, 
-    average_score INTEGER NOT NULL,
+    average_score FLOAT NOT NULL,
     CHECK (average_score<=5),
     FOREIGN KEY (user_id) REFERENCES users (user_id),
     FOREIGN KEY (ISBN_number) REFERENCES books (ISBN_number)
@@ -40,10 +40,13 @@ CREATE TABLE addresses (
     postal_code VARCHAR(16) NOT NULL
 );
 
-    user_id SERIAL PRIMARY KEY,
-    address1  VARCHAR(120) NOT NULL,
-    address2  VARCHAR(120),
-    country VARCHAR NOT NULL,
-    state VARCHAR NOT NULL,
-    postal_code VARCHAR(16) NOT NULL
+-- Table --
+CREATE TABLE reviews (
+    user_id INTEGER UNIQUE NOT NULL,
+    ISBN_number VARCHAR NOT NULL, 
+    score FLOAT NOT NULL,
+    description VARCHAR(280) NOT NULL,
+    CHECK (score <= 5),
+    FOREIGN KEY (user_id) REFERENCES users (user_id),
+    FOREIGN KEY (ISBN_number) REFERENCES books (ISBN_number)
 );
