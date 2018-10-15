@@ -3,7 +3,7 @@ import requests
 import json
 
 from types import *
-from flask import Flask, session, render_template, jsonify, request, redirect, abort
+from flask import Flask, session, render_template, jsonify, request, redirect, abort, send_from_directory
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -13,6 +13,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from helpers import *
 
 app = Flask(__name__)
+
+# Aditional Static folder
+app.config['CUSTOM_STATIC_PATH'] = "node_modules"
 
 # Aditional Debugger
 from flask_debugtoolbar import DebugToolbarExtension
@@ -190,7 +193,9 @@ def show_book(isbn):
 
             db.commit()
 
-            return jsonify({"success": True, "rating": rating, "review_description": review_description}), 200
+            username = db.execute("SELECT username FROM users WHERE user_id = :id", {"id": session["user_id"]}).fetchone()
+
+            return jsonify({"success": True, "rating": rating, "review_description": review_description, "username": username.username}), 200
 
         else: 
             return jsonify({"success": False, "message": "The User has already left a review"}), 403
@@ -215,3 +220,9 @@ def show_book(isbn):
 
         return render_template("book.html", book_details = book_details, reviews = reviews, goodreads_response = goodreads_response.json(),
         user_has_review = user_has_review, isbn = isbn)
+
+
+# Custom static data
+@app.route('/node_modules/<path:filename>')
+def custom_static(filename):
+    return send_from_directory(app.config['CUSTOM_STATIC_PATH'], filename)
