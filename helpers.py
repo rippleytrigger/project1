@@ -61,3 +61,11 @@ def validate_string_content(s):
             chars = chars + 1
 
     return True if digits > chars else False
+
+
+def validate_if_user_has_review(user_id, isbn, db):
+    # Validate if the actual user has already left a review
+    user_has_review = True if db.execute("SELECT user_id FROM reviews WHERE user_id = :id AND isbn_number = :isbn", {"id": user_id, 
+    "isbn": isbn}).fetchone() else False
+
+    return user_has_review

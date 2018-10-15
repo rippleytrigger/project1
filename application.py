@@ -168,12 +168,12 @@ def search():
             return jsonify({"success": True, "list": json_response}), 200
 
         else:
-            return jsonify({"success": False}), 404
-
+            return jsonify({"success": False, "message": "There is no Result on that search. Try other ISBN, book name or author"}), 404
     else:
         return render_template("search.html")
 
-@app.route("/books/isbn_number/<string:isbn>", methods = ['POST', 'GET'])
+
+@app.route("/books/<string:isbn>", methods = ['POST', 'GET'])
 @login_required
 def show_book(isbn):
     """Search book"""
@@ -184,37 +184,34 @@ def show_book(isbn):
 
         review_description = request.form.get('review-description')
 
-        print(f"{rating} --- {review_description} --- {isbn} --- {session['user_id']}")
+        if validate_if_user_has_review(session["user_id"], isbn, db) == False:
+            db.execute("INSERT INTO reviews (user_id, ISBN_number, score, description) VALUES (:user_id, :ISBN_number, :rating, :description)", 
+            {"user_id": session['user_id'], "ISBN_number": isbn, "rating": rating, "description": review_description})
 
-        db.execute("INSERT INTO reviews (user_id, ISBN_number, score, description) VALUES (:user_id, :ISBN_number, :rating, :description)", 
-        {"user_id": session['user_id'], "ISBN_number": isbn, "rating": rating, "description": review_description})
+            db.commit()
 
-        db.commit()
+            return jsonify({"success": True, "rating": rating, "review_description": review_description}), 200
 
-        return render_template("book.html", book_details = book_details, isbn = isbn)
+        else: 
+            return jsonify({"success": False, "message": "The User has already left a review"}), 403
+
+
     else:
         """ Book Details """
 
-
-        # API Good Reads
-        res = requests.get("https://www.goodreads.com/book/review_counts.json", 
+        # API Good Reads 
+        goodreads_response = requests.get("https://www.goodreads.com/book/review_counts.json", 
         params={"key": api_key, "isbns": isbn})
         
-        print(res.json())
+        reviews = db.execute("SELECT reviews.score, reviews.description, username FROM reviews INNER JOIN users ON reviews.user_id = users.user_id WHERE isbn_number = :isbn",
+        {"isbn" : isbn}).fetchall()
 
-        print(isbn)
+        book_details = db.execute("SELECT * FROM books WHERE isbn_number = :isbn", {"isbn": isbn}).fetchone()
 
-        #book_details = db.execute("SELECT * FROM books LEFT JOIN reviews ON books.ISBN_number = reviews.ISBN_number WHERE books.ISBN_number = :isbn",
-        #                {"isbn" : isbn}).fetchall()
-    
-        book_details = db.execute("SELECT * FROM books WHERE ISBN_number = :isbn", 
-        {"isbn" : isbn }).fetchone()
-
-        print(book_details)
+        user_has_review = validate_if_user_has_review(session["user_id"], isbn, db)
 
         if book_details is None:
             abort(404)
 
-        #book_details = dict(book_details)
-
-        return render_template("book.html", book_details = book_details, isbn = isbn)
+        return render_template("book.html", book_details = book_details, reviews = reviews, goodreads_response = goodreads_response.json(),
+        user_has_review = user_has_review, isbn = isbn)
