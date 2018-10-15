@@ -25,32 +25,28 @@ function render_book_list(response)
 
 function render_new_review(response)
 {
-    let search_results_div =  document.querySelector(".book-list")
+    let reviews =  document.querySelector(".reviews")
 
-    search_results_div.innerHTML = "";
+    let review = document.createElement("div");
 
-    let book_list = document.createElement("ul");
+    review.classList.add("review", "alert", "alert-primary")
 
-    for(let book in response.list)
-    {
-        // Iterate though every element of the list and convert it to html
-        
-        let li = document.createElement("li");
+    review.innerHTML = `
+            <header>
+                ${ review[2] }
+                <span>Score: ${ review[0] }</span>
+            </header>
+        <p>${ review[1] }</p>
+    `
 
-        li.innerHTML = `<h2> <a href="/books/${response.list[book].isbn_number}"> ${response.list[book].title} </a>  </h2>`
-
-        book_list.appendChild(li);
-    }
-
-    document.querySelector(".book-list").appendChild(book_list);
+    reviews.appendChild(review);
 }
 
-function render_message(error)
+function render_message(error, container)
 {
-    let container =  document.querySelector(".book-list")
+    let div =  document.querySelector(container)
 
-    container.innerHTML = error.responseJSON.message
-
+    div.innerHTML = error.responseJSON.message
 }
 
 function ajax_search(event)
@@ -65,7 +61,7 @@ function ajax_search(event)
             render_book_list(response)
         },
         error: function(response) {
-            render_message(response);
+            render_message(response, ".book-list");
         }
     });
 }
@@ -116,10 +112,11 @@ function fetch_review_form(event)
         data: $('#' + event.target.id).serialize(),
         type: 'POST',
         success: function(response) {
-            //render_book_list(response)
+            console.log(response)
+            render_new_review(response)
         },
         error: function(response) {
-            render_message(response);
+            render_message(response, ".message");
         }
     });
 }
