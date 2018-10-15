@@ -19,17 +19,6 @@ CREATE TABLE books (
     publication_year INTEGER NOT NULL
 );
 
-CREATE TABLE reviews (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL,
-    ISBN_number VARCHAR NOT NULL,
-    review_count INTEGER NOT NULL, 
-    average_score FLOAT NOT NULL,
-    CHECK (average_score<=5),
-    FOREIGN KEY (user_id) REFERENCES users (user_id),
-    FOREIGN KEY (ISBN_number) REFERENCES books (ISBN_number)
-);
-
 
 CREATE TABLE addresses (
     user_id SERIAL PRIMARY KEY,
@@ -50,3 +39,13 @@ CREATE TABLE reviews (
     FOREIGN KEY (user_id) REFERENCES users (user_id),
     FOREIGN KEY (ISBN_number) REFERENCES books (ISBN_number)
 );
+
+
+
+/*  Use this statement for the api Get reviews */
+SELECT title, author, publication_year, reviews.isbn_number, COUNT(reviews.isbn_number),
+AVG(score) FROM books INNER JOIN reviews ON books.ISBN_number = reviews.ISBN_number 
+WHERE books.isbn_number = '0778313468' GROUP BY reviews.isbn_number, publication_year, title, author;
+
+INSERT INTO reviews (user_id, ISBN_number, score, description) VALUES (4, '0778313468', 2.5, 'Cualquier Vaina')
+

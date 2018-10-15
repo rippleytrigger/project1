@@ -1,5 +1,3 @@
-
-
 function render_book_list(response)
 {
     let search_results_div =  document.querySelector(".book-list")
@@ -27,19 +25,32 @@ function render_new_review(response)
 {
     let reviews =  document.querySelector(".reviews")
 
+    if(document.querySelectorAll(".review").length === 0)
+    {
+        reviews.innerHTML = ""
+    }
+
     let review = document.createElement("div");
 
     review.classList.add("review", "alert", "alert-primary")
 
     review.innerHTML = `
             <header>
-                ${ review[2] }
-                <span>Score: ${ review[0] }</span>
+                ${ response.username }
+                <span>Score: ${ response.rating }</span>
             </header>
-        <p>${ review[1] }</p>
+        <p>${ response.review_description }</p>
     `
 
     reviews.appendChild(review);
+
+    // After appending the new review
+    //slideUp(element,{
+    //    duration: 2500
+    //});
+
+    // Remove Element
+    review.parentNode.removeChild(review);
 }
 
 function render_message(error, container)
@@ -53,8 +64,11 @@ function ajax_search(event)
 {
     event.preventDefault();
 
+    // Compatiblity Problems
+    form_url = event.path[0].baseURI || event.originalTarget.action
+
     $.ajax({
-        url: event.originalTarget.action,
+        url: form_url,
         data: $('#' + event.target.id).serialize(),
         type: 'POST',
         success: function(response) {
@@ -107,8 +121,11 @@ function fetch_review_form(event)
 {
     event.preventDefault();
 
+    // Compatiblity Problems
+    form_url = event.path[0].baseURI || event.originalTarget.action
+
     $.ajax({
-        url: event.originalTarget.action,
+        url: form_url,
         data: $('#' + event.target.id).serialize(),
         type: 'POST',
         success: function(response) {

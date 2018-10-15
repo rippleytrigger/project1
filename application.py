@@ -150,13 +150,13 @@ def search():
         """ Users should be able to type in the ISBN number of a book, 
         the title of a book, or the author of a book """
 
-        if isinstance(search, str):
+        if isinstance(search, str) & validate_string_content(search) == False:
             rows = db.execute(f"SELECT * FROM books WHERE \
             ( LOWER(title) LIKE '%{search.lower()}%' OR LOWER(author) LIKE '%{search.lower()}%' ) \
             LIMIT 50").fetchall()
 
         elif validate_string_content(search) == True:
-            rows = db.execute(f"SELECT * FROM books WHERE ISBN_number LIKE '{search}%' LIMIT 50").fetchall()
+            rows = db.execute(f"SELECT * FROM books WHERE ISBN_number LIKE '%{search}%' LIMIT 50").fetchall()
 
         if rows:
             json_response = []
@@ -221,6 +221,25 @@ def show_book(isbn):
         return render_template("book.html", book_details = book_details, reviews = reviews, goodreads_response = goodreads_response.json(),
         user_has_review = user_has_review, isbn = isbn)
 
+
+""" API ACCESS """
+@app.route('/api/<string:isbn>')
+@login_required
+def get_book_review_summary(isbn):
+    review_summary = db.execute("SELECT title, author, publication_year, reviews.isbn_number, COUNT(reviews.isbn_number), \
+    AVG(score) FROM books INNER JOIN reviews ON books.ISBN_number = reviews.ISBN_number  \
+    WHERE books.isbn_number = :isbn GROUP BY reviews.isbn_number, publication_year, title, author",
+    {"isbn": isbn}).fetchone()
+
+    print(review_summary)
+
+    if review_summary:
+        return jsonify({"title": review_summary[0], "author": review_summary[1], 
+        "publication_year": review_summary[2], "isbn_number": review_summary[3],
+        "score": review_summary[4]
+        }), 200
+    else: 
+        return jsonify({"message": "The isbn has not being found"}), 404
 
 # Custom static data
 @app.route('/node_modules/<path:filename>')
