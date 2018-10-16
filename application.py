@@ -124,10 +124,8 @@ def register_user():
         user_id = db.execute("SELECT user_id FROM users WHERE username = :username",
         {"username": username }).fetchone()
 
-        print(user_id)
-
         # Remember which user has logged in
-        session["user_id"] = user_id
+        session["user_id"] = user_id[0]
 
         # Redirect user to home page
         return redirect("/")
@@ -205,13 +203,14 @@ def show_book(isbn):
         """ Book Details """
 
         # API Good Reads 
-        goodreads_response = requests.get("https://www.goodreads.com/book/review_counts.json", 
-        params={"key": api_key, "isbns": isbn})
+        goodreads_response = requests.get("https://www.goodreads.com/book/review_counts.json",  params={"key": api_key, "isbns": isbn})
         
         reviews = db.execute("SELECT reviews.score, reviews.description, username FROM reviews INNER JOIN users ON reviews.user_id = users.user_id WHERE isbn_number = :isbn",
         {"isbn" : isbn}).fetchall()
 
         book_details = db.execute("SELECT * FROM books WHERE isbn_number = :isbn", {"isbn": isbn}).fetchone()
+
+        print(session["user_id"])
 
         user_has_review = validate_if_user_has_review(session["user_id"], isbn, db)
 
@@ -226,17 +225,36 @@ def show_book(isbn):
 @app.route('/api/<string:isbn>')
 @login_required
 def get_book_review_summary(isbn):
+    """ Via Get Method, send the review summary of the request isbn  """
+
     review_summary = db.execute("SELECT title, author, publication_year, reviews.isbn_number, COUNT(reviews.isbn_number), \
     AVG(score) FROM books INNER JOIN reviews ON books.ISBN_number = reviews.ISBN_number  \
     WHERE books.isbn_number = :isbn GROUP BY reviews.isbn_number, publication_year, title, author",
     {"isbn": isbn}).fetchone()
 
-    print(review_summary)
+    if review_summary:
+        return jsonify({
+        "title": review_summary[0],
+        "author": review_summary[1], 
+        "publication_year": review_summary[2], 
+        "isbn_number": review_summary[3],
+        "review_count": review_summary[4],
+        "score": review_summary[5]
+        }), 200
+
+    # If the above query does not get a result, that means that the requested isbn do not have a review
+    # Let´s see if the isbn is loaded in the db. If it stills returns a None value, that means that the requested isbn does not exists
+    if review_summary == None:
+        review_summary = db.execute("SELECT title, author, publication_year, isbn_number FROM books WHERE ISBN_number = :isbn", {"isbn": isbn}).fetchone()
 
     if review_summary:
-        return jsonify({"title": review_summary[0], "author": review_summary[1], 
-        "publication_year": review_summary[2], "isbn_number": review_summary[3],
-        "score": review_summary[4]
+        return jsonify({
+        "title": review_summary[0],
+        "author": review_summary[1], 
+        "publication_year": review_summary[2], 
+        "isbn_number": review_summary[3],
+        "review_count": 0,
+        "score": 0
         }), 200
     else: 
         return jsonify({"message": "The isbn has not being found"}), 404

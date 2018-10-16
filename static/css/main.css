@@ -5,6 +5,21 @@
   --bg-star-color: #FFD700;
 }
 
+body {
+  background: linear-gradient(to right, #f2709c, #ff9472);
+}
+
+.nav-menu ul {
+  display: flex;
+  justify-content: space-around;
+  list-style: none;
+}
+.nav-menu ul li {
+  padding: 2em;
+  flex: 1;
+  text-align: center;
+}
+
 .two-columns-container {
   display: grid;
   grid-template-columns: 1fr 1fr;

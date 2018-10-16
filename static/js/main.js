@@ -65,7 +65,7 @@ function ajax_search(event)
     event.preventDefault();
 
     // Compatiblity Problems
-    form_url = event.path[0].baseURI || event.originalTarget.action
+    form_url = window.location.href
 
     $.ajax({
         url: form_url,
@@ -122,7 +122,7 @@ function fetch_review_form(event)
     event.preventDefault();
 
     // Compatiblity Problems
-    form_url = event.path[0].baseURI || event.originalTarget.action
+    form_url = window.location.href
 
     $.ajax({
         url: form_url,
